@@ -74,20 +74,20 @@ bool is_available(int room_num) {
 	return true;
 }
 
-char display(string *display_string, int size) {
-	char c;
+string display(string *display_string, int size) {
+	string c;
 	for(int i = 0 ; i<size; i++){
 		cout<< '\n' << display_string[i] ;
 	}
 	cout <<"\nPlease select from the previous options: ";
-	cin >> c;
+	getline(cin ,c);
 	return c;
 }   
 
-char wrong_input_repeat() {
-	char c;
+string wrong_input_repeat() {
+	string c;
 	cout << "\nWrong Input. Please select from the previous options: ";
-	cin >> c;
+	getline(cin ,c);
 	return c;
 }
 
@@ -162,7 +162,7 @@ void get_passport() {
 string get_customer_name() {
 	string name;
 	cout << "Full name: ";
-	cin.ignore();
+	// cin.ignore();
 	getline(cin ,name);
 	while (!contain_whitespace(name)){
 		cout << "Please Enter the full name: ";
@@ -178,20 +178,20 @@ int birthyear_menu() {
 	int birthyear = get_numeric_input();
 		while (underage(birthyear)){
 			cout << "Customers who are less than 18 years old cannot book a room\n";
-			char input = display(display_dob, 2);
-			while (input != '1' && input != '2')
+			string input = display(display_dob, 2);
+			while (input != "1" && input != "2")
 				input = wrong_input_repeat();
-			if (input == '2') return -1;
+			if (input == "2") return -1;
 			cout <<"\nYear of birth: ";
 			birthyear = get_numeric_input();
 		}
 	return 0;
 }
-char main_menu(){
-	char input;
+string main_menu(){
+	string input;
 	string display_main[] = {"Welcome to UNM Hotel booking system" , "1. Book a room" , "Q. Quit"};
 	input = display(display_main, 3);
-	while (input != '1' && input != 'Q') 
+	while (input != "1" && input != "Q") 
 		input = wrong_input_repeat();
 	return input;
 }
@@ -202,7 +202,7 @@ void run_program() {
 			cout << "All rooms are fully booked, thank you.\n";
 			break;
 		}
-		if (main_menu() == 'Q') break ;
+		if (main_menu() == "Q") break ;
 		if(birthyear_menu() == -1) continue;
 		string name = get_customer_name();
 		get_passport();
