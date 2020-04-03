@@ -1,6 +1,6 @@
 /* Year 1 Programming coursework 3 - Q2 
- * By Kok Wei
- * 3/4/2020
+   Kok Wei
+   3/4/2020
  */
 
 #include <iostream>
@@ -41,9 +41,9 @@ bool is_fully_booked(int num_booked_room) { return num_booked_room == 260; }
 
 bool underage(int birthyear) { return 2020 - birthyear < 18; }
 
-bool is_hill_view(int num) {return num%100>20;}
+bool is_hill_view(int room_num) {return room_num%100>20;}
 
-bool is_L5_and_below(int num) {return num < 600;}
+bool is_L5_and_below(int room_num) {return room_num < 600;}
 
 bool contain_whitespace(string str) {
 	char c = ' ';
@@ -51,7 +51,7 @@ bool contain_whitespace(string str) {
 	while(str.back() == c) str.pop_back();
 	while(str.front() == c) str.erase(0, 1);
 	//if white space detected, will return npos which is -1
-    return str.find(c) != std::string::npos;
+	return str.find(c) != -1;
 }
 
 bool room_invalid(int num){
@@ -62,7 +62,7 @@ bool is_available(int room_num) {
 	for(int i = 0; i <TOTAL_ROOM ; i++) {
 		BookedRoom room = room_arr[i];
 		if(room.getNumber() == 0) {
-			//it means this particular element is empty, so break out of loop
+			// it means this particular array element onwards are empty, so break out of loop to save time
 			break;
 		}
 		else if (room.getNumber() == room_num){
@@ -74,22 +74,6 @@ bool is_available(int room_num) {
 	return true;
 }
 
-string display(string *display_string, int size) {
-	string c;
-	for(int i = 0 ; i<size; i++){
-		cout<< '\n' << display_string[i] ;
-	}
-	cout <<"\nPlease select from the previous options: ";
-	getline(cin ,c);
-	return c;
-}   
-
-string wrong_input_repeat() {
-	string c;
-	cout << "\nWrong Input. Please select from the previous options: ";
-	getline(cin ,c);
-	return c;
-}
 
 int get_numeric_input(){
 	int input;
@@ -103,10 +87,10 @@ int get_numeric_input(){
 	return input;
 }
 
-int checkPrice(int num) {
+int checkPrice(int room_num) {
 	int price = 120;
-		if(is_L5_and_below(num)) price = 90;
-		if(is_hill_view(num)) {
+		if(is_L5_and_below(room_num)) price = 90;
+		if(is_hill_view(room_num)) {
 			price+=HILL_COST;
 			cout << "This is a hill-view room with a price of " <<price<< " per night";
 		} else {
@@ -142,14 +126,14 @@ int get_room_number(){
 }
 
 void book_room(string name) {
-	int num, nights,price;
+	int room_num, nights,price;
 	cout << "\nThere are " << TOTAL_ROOM - num_booked_room << " available rooms\n\n";
-	num = get_room_number();
-	price = checkPrice(num);
+	room_num = get_room_number();
+	price = checkPrice(room_num);
 	nights = get_nights();
-	BookedRoom room(num, nights, name);
+	BookedRoom room(room_num, nights, name);
 	room_arr[num_booked_room++] = room;
-	cout << "\nRoom " << num << " was booked for " << nights << " nights by " << name <<'\n';
+	cout << "\nRoom " << room_num << " was booked for " << nights << " nights by " << name <<'\n';
 	cout << "The total cost is RM " << price*nights << '\n';
 }
 
@@ -157,27 +141,50 @@ void get_passport() {
 	string id;
 	cout << "Passport/ID number: ";
 	getline(cin ,id);
+	if(id.find(' ') != -1) {
+		cout << "passport cannot contain empty space!\n";
+		get_passport();
+	}
 }
 
 string get_customer_name() {
-	string name;
+	cin.ignore(100, '\n');
+	string name ;
 	cout << "Full name: ";
-	// cin.ignore();
 	getline(cin ,name);
-	while (!contain_whitespace(name)){
+	while (!contain_whitespace(name)) {
 		cout << "Please Enter the full name: ";
 		getline(cin ,name);
 	}
 	return name;
 }
 
+string display(string *display_string, int size) {
+	string c;
+	for(int i = 0 ; i<size; i++){
+		cout<< '\n' << display_string[i] ;
+	}
+	cout <<"\nPlease select from the previous options: ";
+	getline(cin ,c);
+	return c;
+}   
+
+string wrong_input_repeat() {
+	string c;
+	cout << "\nWrong Input. Please select from the previous options: ";
+	getline(cin ,c);
+	return c;
+}
+
 int birthyear_menu() {
+
 	string display_dob[] = {"1. Enter a valid year of birth", "2. Go to main menu"};
 	cout <<"\nCustomer information:\n";
 	cout <<"\nYear of birth: ";
 	int birthyear = get_numeric_input();
 		while (underage(birthyear)){
 			cout << "Customers who are less than 18 years old cannot book a room\n";
+			cin.ignore(100, '\n');
 			string input = display(display_dob, 2);
 			while (input != "1" && input != "2")
 				input = wrong_input_repeat();
@@ -187,6 +194,7 @@ int birthyear_menu() {
 		}
 	return 0;
 }
+
 string main_menu(){
 	string input;
 	string display_main[] = {"Welcome to UNM Hotel booking system" , "1. Book a room" , "Q. Quit"};
@@ -207,6 +215,7 @@ void run_program() {
 		string name = get_customer_name();
 		get_passport();
 		book_room(name);
+		cin.ignore(100, '\n');
 	}
 }
 
